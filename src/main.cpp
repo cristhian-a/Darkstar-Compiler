@@ -1,0 +1,46 @@
+#include <iostream>
+#include <fstream>
+#include <optional>
+#include <vector>
+
+#include "./generator.hpp"
+#include "./parser.hpp"
+#include "./tokenizer.hpp"
+
+int main(int argc, char* argv[]) {
+    if (argc != 2) {
+        std::cerr << "Wrong arguments! You should use: " << std::endl;
+        std::cerr << "darkstar <input.ds>" << std::endl;
+        return EXIT_FAILURE;
+    }
+
+    std::string contents;
+    {
+        std::stringstream contentStream;
+        std::fstream input(argv[1], std::ios::in);
+        contentStream << input.rdbuf();
+        contents = contentStream.str();
+    }
+
+    std::vector<Token> tokens = Tokenizer(std::move(contents)).tokenize();
+    std::optional<node::Exit> root_node = Parser(std::move(tokens)).parse();
+
+    if (!root_node.has_value()) {
+        std::cerr << "No exit statement was found!\n";
+        return EXIT_FAILURE;
+    }
+    
+
+    std::string asmOutput = Generator(root_node.value()).generate();
+    std::cout << asmOutput << std::endl;
+
+    {
+        std::fstream file("./out.asm", std::ios::out);
+        file << asmOutput;
+    }
+
+    system("nasm -f elf64 out.asm -o out.o");
+    system("ld out.o -o out");
+    
+    return EXIT_SUCCESS;
+}
