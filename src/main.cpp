@@ -35,12 +35,12 @@ int main(int argc, char* argv[]) {
     std::cout << asmOutput << std::endl;
 
     {
-        std::fstream file("./out.asm", std::ios::out);
+        std::fstream file("./target/out.asm", std::ios::out);
         file << asmOutput;
     }
 
-    system("nasm -f elf64 out.asm -o out.o");
-    system("ld out.o -o out");
+    system("nasm -f elf64 target/out.asm -o target/out.o");
+    system("ld target/out.o -o target/out");
     
     return EXIT_SUCCESS;
 }
