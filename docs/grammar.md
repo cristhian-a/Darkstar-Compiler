@@ -4,8 +4,8 @@ $$
     [\text{prog}] &\to [\text{stmt}]^* \\
     [\text{stmt}] &\to
     \begin{cases}
-        exit([\text{expr}]); \\
-        var \space\text{ident} = [\text{expr}]; \\
+        \text{exit}([\text{expr}]); \\
+        \text{var} \space\text{ident} = [\text{expr}]; \\
     \end{cases} \\
     [\text{expr}] &\to
     \begin{cases}

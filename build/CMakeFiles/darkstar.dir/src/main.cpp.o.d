@@ -167,4 +167,5 @@ CMakeFiles/darkstar.dir/src/main.cpp.o: \
  /mnt/c/Users/User/IdeaProjects/darkstar/src/./generator.hpp \
  /usr/include/c++/13/sstream /usr/include/c++/13/bits/sstream.tcc \
  /mnt/c/Users/User/IdeaProjects/darkstar/src/././parser.hpp \
+ /usr/include/c++/13/variant /usr/include/c++/13/bits/parse_numbers.h \
  /mnt/c/Users/User/IdeaProjects/darkstar/src/./././tokenizer.hpp

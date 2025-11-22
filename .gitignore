@@ -1,2 +1,5 @@
 target/out
 target/*.o
+build/
+
+.vscode/

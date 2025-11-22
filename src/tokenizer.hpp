@@ -6,10 +6,13 @@
 
 enum class TokenType {
     exit,
+    var,
+    ident,
     int_lit,
     semi,
     open_paren,
-    close_paren
+    close_paren,
+    equals
 };
 
 struct Token {
@@ -27,7 +30,7 @@ class Tokenizer {
             std::string buffer;
 
             while (peek().has_value()) {
-                char current = pop();
+                char current = next();
 
                 if (std::isspace(current)) {
                     continue;
@@ -35,7 +38,7 @@ class Tokenizer {
                     // checks for comments and ignores them
                     if (peek().has_value() && peek().value() == '/') {
                         do {
-                            pop();
+                            next();
                         } while (peek().has_value() && peek().value() != '\n');
 
                         continue;
@@ -44,31 +47,34 @@ class Tokenizer {
                     buffer.push_back(current);
 
                     while (peek().has_value() && std::isalnum(peek().value())) {
-                        buffer.push_back(pop());
+                        buffer.push_back(next());
                     }
                     
                     if (buffer == "exit") {
                         tokens.push_back({.type = TokenType::exit, .value = {}});
-                        buffer.clear();
-                        continue;
+                    } else if (buffer == "var") {
+                        tokens.push_back({.type = TokenType::var, .value = {}});
                     } else {
-                        std::cerr << "Error during keyWord tokenization!\n";
-                        std::cerr << buffer << "\n";
-                        exit(EXIT_FAILURE);
+                        tokens.push_back({.type = TokenType::ident, .value = buffer});
                     }
-                } else if (current == '(') {
-                    tokens.push_back({.type = TokenType::open_paren});
-                } else if (current == ')') {
-                    tokens.push_back({.type = TokenType::close_paren});
+
+                    buffer.clear();
+                    continue;
                 } else if (std::isdigit(current)) {
                     buffer.push_back(current);
                     while (peek().has_value() && std::isdigit(peek().value())) {
-                        buffer.push_back(pop());
+                        buffer.push_back(next());
                     }
                     
                     tokens.push_back({.type = TokenType::int_lit, .value = buffer});
                     buffer.clear();
                     continue;
+                } else if (current == '(') {
+                    tokens.push_back({.type = TokenType::open_paren});
+                } else if (current == ')') {
+                    tokens.push_back({.type = TokenType::close_paren});
+                } else if (current == '=') {
+                    tokens.push_back({.type = TokenType::equals});
                 } else if (current == ';') {
                     tokens.push_back({.type = TokenType::semi, .value = {}});
                     continue;
@@ -94,5 +100,5 @@ class Tokenizer {
 
             return {};
         }
-        inline char pop() { return m_src[m_index++]; }
+        inline char next() { return m_src[m_index++]; }
 };

@@ -23,15 +23,15 @@ int main(int argc, char* argv[]) {
     }
 
     std::vector<Token> tokens = Tokenizer(std::move(contents)).tokenize();
-    std::optional<node::Exit> root_node = Parser(std::move(tokens)).parse();
+    std::optional<node::Prog> prog = Parser(std::move(tokens)).parse_prog();
 
-    if (!root_node.has_value()) {
-        std::cerr << "No exit statement was found!\n";
+    if (!prog.has_value()) {
+        std::cerr << "No valid program statements!\n";
         return EXIT_FAILURE;
     }
     
 
-    std::string asmOutput = Generator(root_node.value()).generate();
+    std::string asmOutput = Generator(prog.value()).generate();
     std::cout << asmOutput << std::endl;
 
     {
