@@ -1,3 +1,0 @@
-/mnt/c/Users/User/IdeaProjects/darkstar/build/CMakeFiles/darkstar.dir
-/mnt/c/Users/User/IdeaProjects/darkstar/build/CMakeFiles/edit_cache.dir
-/mnt/c/Users/User/IdeaProjects/darkstar/build/CMakeFiles/rebuild_cache.dir

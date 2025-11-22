@@ -1,1 +1,0 @@
-/usr/bin/c++ CMakeFiles/darkstar.dir/src/main.cpp.o -o darkstar 
