@@ -29,19 +29,34 @@ class Parser {
             while (peek().has_value()) {
                 Token current = pop();
                 if (current.type == TokenType::exit) {
+                    if (peek().has_value() && peek().value().type == TokenType::open_paren) {
+                        pop();  // popping the '('
+                    } else {
+                        std::cerr << "Expected `(`\n";
+                        exit(EXIT_FAILURE);
+                    }
+                    
                     if (auto expr_node = parse_expr()) {
                         exit_node = node::Exit { .expr = expr_node.value() };
                     } else {
                         std::cerr << "Invalid expression!\n";
                         exit(EXIT_FAILURE);
                     }
-                    
-                    if (!peek().has_value() || peek().value().type != TokenType::semi) {
-                        std::cerr << "No semicolun finishing the expression!\n";
+
+                    if (peek().has_value() && peek().value().type == TokenType::close_paren) {
+                        pop();  // popping the ')'
+                    } else {
+                        std::cerr << "Expected `)`\n";
                         exit(EXIT_FAILURE);
                     }
                     
-                    pop();  // popping the semicolun
+                    
+                    if (peek().has_value() && peek().value().type == TokenType::semi) {
+                        pop();  // popping the semicolun
+                    } else {
+                        std::cerr << "Expected `;`\n";
+                        exit(EXIT_FAILURE);
+                    }
                 }
                 
             }
@@ -52,9 +67,9 @@ class Parser {
     private:
         const std::vector<Token> m_tokens;
         size_t m_index = 0;
-        [[nodiscard]] inline std::optional<Token> peek(int ahead = 1) const {
-            if (m_index < m_tokens.size()) {
-                return m_tokens[m_index];
+        [[nodiscard]] inline std::optional<Token> peek(int offset = 0) const {
+            if (m_index + offset < m_tokens.size()) {
+                return m_tokens[m_index + offset];
             }
 
             return {};

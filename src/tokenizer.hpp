@@ -7,7 +7,9 @@
 enum class TokenType {
     exit,
     int_lit,
-    semi
+    semi,
+    open_paren,
+    close_paren
 };
 
 struct Token {
@@ -29,6 +31,15 @@ class Tokenizer {
 
                 if (std::isspace(current)) {
                     continue;
+                } else if (current == '/') {
+                    // checks for comments and ignores them
+                    if (peek().has_value() && peek().value() == '/') {
+                        do {
+                            pop();
+                        } while (peek().has_value() && peek().value() != '\n');
+
+                        continue;
+                    }
                 } else if (std::isalpha(current)) {
                     buffer.push_back(current);
 
@@ -45,6 +56,10 @@ class Tokenizer {
                         std::cerr << buffer << "\n";
                         exit(EXIT_FAILURE);
                     }
+                } else if (current == '(') {
+                    tokens.push_back({.type = TokenType::open_paren});
+                } else if (current == ')') {
+                    tokens.push_back({.type = TokenType::close_paren});
                 } else if (std::isdigit(current)) {
                     buffer.push_back(current);
                     while (peek().has_value() && std::isdigit(peek().value())) {
@@ -72,9 +87,9 @@ class Tokenizer {
     private:
         const std::string m_src;
         size_t m_index = 0;
-        [[nodiscard]] inline std::optional<char> peek(int ahead = 1) const {
-            if (m_index < m_src.length()) {
-                return m_src[m_index];
+        [[nodiscard]] inline std::optional<char> peek(int offset = 0) const {
+            if (m_index + offset < m_src.length()) {
+                return m_src[m_index + offset];
             }
 
             return {};
