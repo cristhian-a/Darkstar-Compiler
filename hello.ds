@@ -1,1 +1,5 @@
-exit(10);
+var puska = 69;
+var uepa = 15;
+var canalhas = 29;
+
+exit(puska);

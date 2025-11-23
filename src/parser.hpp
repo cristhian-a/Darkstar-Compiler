@@ -66,8 +66,8 @@ class Parser {
 
                 result_stmt = node::Stmt { .var = stmt_exit };
             } else if (current.type == TokenType::var) {
-                if (peek(1).has_value() && peek(1).value().type == TokenType::ident &&
-                    peek(2).has_value() && peek(2).value().type == TokenType::equals
+                if (peek().has_value() && peek().value().type == TokenType::ident &&
+                    peek(1).has_value() && peek(1).value().type == TokenType::equals
                 ) {
                     node::StmtVar stmt_var = node::StmtVar {.ident = next()};
                     next();  // skipping the equal sign
@@ -95,7 +95,7 @@ class Parser {
 
         std::optional<node::Prog> parse_prog() {
             node::Prog prog_node;
-            
+
             while (peek().has_value()) {
                 if (auto stmt = parse_stmt()) {
                     prog_node.stmts.push_back(stmt.value());

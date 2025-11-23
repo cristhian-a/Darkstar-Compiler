@@ -32,7 +32,7 @@ int main(int argc, char* argv[]) {
     
 
     std::string asmOutput = Generator(prog.value()).generate();
-    std::cout << asmOutput << std::endl;
+    // std::cout << asmOutput << std::endl;
 
     {
         std::fstream file("./target/out.asm", std::ios::out);

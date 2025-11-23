@@ -1,8 +1,24 @@
 global _start
 
 _start:
-    mov rax, 10
+    ; var declaration
+    ; int_lit
+    mov rax, 69
     push rax
+
+    ; var declaration
+    ; int_lit
+    mov rax, 15
+    push rax
+
+    ; var declaration
+    ; int_lit
+    mov rax, 29
+    push rax
+
+    ; exit
+    ; ident
+    push QWORD [rsp + 16]
 
     mov rax, 60
     pop rdi

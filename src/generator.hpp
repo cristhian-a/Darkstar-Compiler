@@ -1,6 +1,7 @@
 #pragma once
 
 #include <sstream>
+#include <unordered_map>
 
 #include "./parser.hpp"
 
@@ -14,12 +15,23 @@ class Generator {
                 Generator* gen;
 
                 void operator()(const node::ExprIdent& expr_ident) const {
-                    gen->m_output << "    mov rax, " << expr_ident.ident.value.value() << "\n";
-                    gen->m_output << "    push rax\n\n";
+                    if (!gen->m_vars.count(expr_ident.ident.value.value())) {
+                        std::cerr << "Undeclared identifier: " << expr_ident.ident.value.value() << "\n";
+                        exit(EXIT_FAILURE);
+                    }
+                    gen->m_output << "    ; ident\n";
+                    
+                    const Var& var = gen->m_vars[expr_ident.ident.value.value()];
+                    std::stringstream offset;
+                    offset << "QWORD [rsp + " << (gen->m_stack_size - var.stack_loc - 1) * 8 << "]\n";
+                    gen->push(offset.str());
                 }
+
                 void operator()(const node::ExprIntLit& expr_intlit) {
+                    gen->m_output << "    ; int_lit\n";
                     gen->m_output << "    mov rax, " << expr_intlit.int_lit.value.value() << "\n";
-                    gen->m_output << "    push rax\n\n";
+                    gen->push("rax");
+                    gen->m_output << "\n";
                 }
             };
 
@@ -32,13 +44,26 @@ class Generator {
                 Generator* gen;
 
                 void operator()(const node::StmtExit& stmt_exit) const {
+                    gen->m_output << "    ; exit\n";
+
                     gen->generate_expr(stmt_exit.expr);
 
                     gen->m_output << "    mov rax, 60\n";
-                    gen->m_output << "    pop rdi\n";
+                    gen->pop("rdi");
                     gen->m_output << "    syscall\n\n";
                 }
-                void operator()(const node::StmtVar& stmt_var) {}
+
+                void operator()(const node::StmtVar& stmt_var) {
+                    gen->m_output << "    ; var declaration\n";
+
+                    if (gen->m_vars.count(stmt_var.ident.value.value())) {
+                        std::cerr << "Identifier already used: " << stmt_var.ident.value.value() << "\n";
+                        exit(EXIT_FAILURE);
+                    }
+
+                    gen->m_vars.insert({stmt_var.ident.value.value(), Var { .stack_loc = gen->m_stack_size } });
+                    gen->generate_expr(stmt_var.expr);
+                }
             };
 
             StmtVisitor visitor { .gen = this };
@@ -60,6 +85,22 @@ class Generator {
             return m_output.str();
         }
     private:
+        struct Var {
+            size_t stack_loc;
+        };
+
         const node::Prog m_prog;
         std::stringstream m_output;
+        size_t m_stack_size = 0;
+        std::unordered_map<std::string, Var> m_vars {};
+
+        void push(const std::string& regist) {
+            m_output << "    push " << regist << "\n";
+            m_stack_size++;
+        }
+
+        void pop(const std::string& regist) {
+            m_output << "    pop " << regist << "\n";
+            m_stack_size--;
+        }
 };
