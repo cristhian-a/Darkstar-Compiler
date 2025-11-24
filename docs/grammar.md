@@ -1,17 +1,23 @@
 $$
 
 \begin{align}
-    [\text{prog}] &\to [\text{stmt}]^* \\
-    [\text{stmt}] &\to
+    [\text{Prog}] &\to [\text{Stmt}]^* \\
+    [\text{Stmt}] &\to
     \begin{cases}
-        \text{exit}([\text{expr}]); \\
-        \text{var} \space\text{ident} = [\text{expr}]; \\
+        \text{exit}([\text{Expr}]); \\
+        \text{var} \space\text{ident} = [\text{Expr}]; \\
     \end{cases} \\
-    [\text{expr}] &\to
+    [\text{Expr}] &\to
     \begin{cases}
         \text{int\_lit} \\
         \text{ident} \\
-    \end{cases}
+        [\text{BinExpr}] \\
+    \end{cases} \\
+    [\text{BinExpr}] &\to
+    \begin{cases}
+        [\text{Expr}] * [\text{Expr}] & \text{prio} = 1 \\
+        [\text{Expr}] + [\text{Expr}] & \text{prio} = 0 \\
+    \end{cases} \\
 \end{align}
 
 $$

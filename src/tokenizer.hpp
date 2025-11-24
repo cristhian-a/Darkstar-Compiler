@@ -70,11 +70,11 @@ class Tokenizer {
                     buffer.clear();
                     continue;
                 } else if (current == '(') {
-                    tokens.push_back({.type = TokenType::open_paren});
+                    tokens.push_back({.type = TokenType::open_paren, .value = {}});
                 } else if (current == ')') {
-                    tokens.push_back({.type = TokenType::close_paren});
+                    tokens.push_back({.type = TokenType::close_paren, .value = {}});
                 } else if (current == '=') {
-                    tokens.push_back({.type = TokenType::equals});
+                    tokens.push_back({.type = TokenType::equals, .value = {}});
                 } else if (current == ';') {
                     tokens.push_back({.type = TokenType::semi, .value = {}});
                     continue;

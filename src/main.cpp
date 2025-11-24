@@ -29,14 +29,11 @@ int main(int argc, char* argv[]) {
         std::cerr << "No valid program statements!\n";
         return EXIT_FAILURE;
     }
-    
-
-    std::string asmOutput = Generator(prog.value()).generate();
-    // std::cout << asmOutput << std::endl;
 
     {
+        Generator generator(prog.value());
         std::fstream file("./target/out.asm", std::ios::out);
-        file << asmOutput;
+        file << generator.generate();
     }
 
     system("nasm -f elf64 target/out.asm -o target/out.o");
