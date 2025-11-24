@@ -21,22 +21,13 @@ namespace node {
     struct Prog { std::vector<Stmt*> stmts; };
 }
 
-// assume node:: types are:
-// struct Prog { std::vector<Stmt*> stmts; };
-// struct Stmt { std::variant<StmtExit*, StmtVar*> var; };
-// struct Expr { std::variant<ExprIntLit*, ExprIdent*, BinExpr*> var; };
-// etc.
-// and Token, TokenType exist.
-
 class Parser {
 public:
-    // parser borrows the arena instance (owned by caller or kept alive by caller)
     Parser(std::vector<Token> tokens, ArenaAllocator& allocator)
       : m_tokens(std::move(tokens)), m_allocator(allocator) { }
 
-    // parse_prog now returns pointer allocated in arena
     node::Prog* parse_prog() {
-        node::Prog* prog = m_allocator.alloc<node::Prog>(); // constructs vector
+        node::Prog* prog = m_allocator.alloc<node::Prog>();
         while (peek().has_value()) {
             auto maybe_stmt = parse_stmt();
             if (maybe_stmt) {
@@ -49,7 +40,6 @@ public:
         return prog;
     }
 
-    // parse a statement, returning arena-allocated Stmt*
     std::optional<node::Stmt*> parse_stmt() {
         if (!peek().has_value()) return {};
 
@@ -126,11 +116,10 @@ public:
         return {};
     }
 
-    // parse an expression, returns Expr* allocated in arena
     std::optional<node::Expr*> parse_expr() {
         if (!peek().has_value()) return {};
 
-        node::Expr* expr = m_allocator.alloc<node::Expr>(); // construct variant
+        node::Expr* expr = m_allocator.alloc<node::Expr>();
 
         Token t = peek().value();
         if (t.type == TokenType::int_lit) {

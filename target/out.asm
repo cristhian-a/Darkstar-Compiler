@@ -3,18 +3,17 @@ global _start
 _start:
     ; var declaration
     ; int_lit
-    mov rax, 69
-    push rax
-
-    ; var declaration
-    ; int_lit
     mov rax, 15
     push rax
 
     ; var declaration
     ; int_lit
-    mov rax, 22
+    mov rax, 69
     push rax
+
+    ; var declaration
+    ; ident
+    push QWORD [rsp + 0]
 
     ; exit
     ; ident
