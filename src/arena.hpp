@@ -16,7 +16,7 @@ class ArenaAllocator {
 
         inline ArenaAllocator(const ArenaAllocator& other) = delete;
         inline ArenaAllocator& operator=(const ArenaAllocator& other) = delete;
-        inline ~ArenaAllocator() { free(m_buffer); }
+        // inline ~ArenaAllocator() { free(m_buffer); } // commenting this makes the first node able to be read again
 
     private:
         size_t m_size;

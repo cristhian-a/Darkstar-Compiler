@@ -1,2 +1,2 @@
-var puska = 69;
-exit(uepa);
+// var puska = 69;
+exit(0);

@@ -88,6 +88,8 @@ class Generator {
         [[nodiscard]] inline std::string generate() {
             m_output << "global _start\n\n_start:\n";
 
+            std::cout << "Number of tokens to generate: " << m_prog.stmts.size() << "\n";
+
             for (const node::Stmt* stmt : m_prog.stmts) {
                 std::cout << "Next Stmt...\n";
                 generate_stmt(stmt);
