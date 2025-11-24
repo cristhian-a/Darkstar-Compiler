@@ -82,8 +82,6 @@ class Generator {
             };
 
             StmtVisitor visitor { .gen = *this };
-            auto a = stmt->var;
-            std::cout << "Hah\n";
             std::visit(visitor, stmt->var);
         }
 

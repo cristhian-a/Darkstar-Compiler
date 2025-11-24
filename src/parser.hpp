@@ -61,7 +61,6 @@ class Parser {
                 }
 
                 node::StmtExit* stmt_exit = m_allocator.alloc<node::StmtExit>();
-                new (stmt_exit) node::StmtExit;
 
                 if (auto expr_node = parse_expr()) {
                     stmt_exit->expr = expr_node.value();
@@ -85,7 +84,6 @@ class Parser {
                 }
 
                 node::Stmt* stmt = m_allocator.alloc<node::Stmt>();
-                new (stmt) node::Stmt;
                 stmt->var = stmt_exit;
                 return stmt;
             } else if (current.type == TokenType::var) {
@@ -93,7 +91,6 @@ class Parser {
                     peek(1).has_value() && peek(1).value().type == TokenType::equals
                 ) {
                     node::StmtVar* stmt_var = m_allocator.alloc<node::StmtVar>();
-                    new (stmt_var) node::StmtVar;
                     stmt_var->ident = next();
                     next();  // skipping '='
 
@@ -111,9 +108,7 @@ class Parser {
                         exit(EXIT_FAILURE);
                     }
 
-                    node::Stmt* stmt = new(m_allocator.alloc<node::Stmt>()) node::Stmt();
-                    new (stmt) node::Stmt();
-
+                    node::Stmt* stmt = m_allocator.alloc<node::Stmt>();
                     stmt->var = stmt_var;
                     return stmt;
                 }
