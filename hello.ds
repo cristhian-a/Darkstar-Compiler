@@ -1,2 +1,4 @@
-// var puska = 69;
-exit(0);
+var puska = 69;
+var uepa = 15;
+var champ = 22;
+exit(champ);

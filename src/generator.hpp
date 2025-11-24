@@ -8,8 +8,8 @@
 
 class Generator {
     public:
-        inline explicit Generator(node::Prog prog) 
-        : m_prog(std::move(prog)) {}
+        inline explicit Generator(node::Prog* prog) 
+        : m_prog(prog) {}
 
         void generate_expr(const node::Expr* expr) {
             struct ExprVisitor {
@@ -88,9 +88,9 @@ class Generator {
         [[nodiscard]] inline std::string generate() {
             m_output << "global _start\n\n_start:\n";
 
-            std::cout << "Number of tokens to generate: " << m_prog.stmts.size() << "\n";
+            std::cout << "Number of tokens to generate: " << m_prog->stmts.size() << "\n";
 
-            for (const node::Stmt* stmt : m_prog.stmts) {
+            for (const node::Stmt* stmt : m_prog->stmts) {
                 std::cout << "Next Stmt...\n";
                 generate_stmt(stmt);
             }
@@ -106,7 +106,7 @@ class Generator {
             size_t stack_loc;
         };
 
-        const node::Prog m_prog;
+        const node::Prog* m_prog;
         std::stringstream m_output;
         size_t m_stack_size = 0;
         std::unordered_map<std::string, Var> m_vars {};

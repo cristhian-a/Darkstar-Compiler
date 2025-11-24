@@ -3,6 +3,7 @@
 #include <optional>
 #include <vector>
 
+#include "./arena.hpp"
 #include "./generator.hpp"
 #include "./parser.hpp"
 #include "./tokenizer.hpp"
@@ -23,7 +24,9 @@ int main(int argc, char* argv[]) {
     }
 
     std::vector<Token> tokens = Tokenizer(std::move(contents)).tokenize();
-    std::optional<node::Prog> prog = Parser(std::move(tokens)).parse_prog();
+
+    ArenaAllocator arena(4 * 1024 * 1024);
+    std::optional<node::Prog*> prog = Parser(std::move(tokens), arena).parse_prog();
 
     if (!prog.has_value()) {
         std::cerr << "No valid program statements!\n";
@@ -35,6 +38,8 @@ int main(int argc, char* argv[]) {
         std::fstream file("./target/out.asm", std::ios::out);
         file << generator.generate();
     }
+
+    arena.reset();
 
     system("nasm -f elf64 target/out.asm -o target/out.o");
     system("ld target/out.o -o target/out");
