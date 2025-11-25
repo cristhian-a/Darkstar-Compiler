@@ -34,15 +34,25 @@ class Tokenizer {
 
                 if (std::isspace(current)) {
                     continue;
-                } else if (current == '/') {
+                } else if (current == '/' && peek().has_value() && peek().value() == '/') {
                     // checks for comments and ignores them
-                    if (peek().has_value() && peek().value() == '/') {
-                        do {
-                            next();
-                        } while (peek().has_value() && peek().value() != '\n');
-
-                        continue;
+                    while (peek().has_value() && peek().value() != '\n') {
+                        next();
                     }
+                    
+                    continue;
+                } else if (current == '/' && peek().has_value() && peek().value() == '*') {
+                    next(); // consumes '*'
+                    
+                    // checks multi-line comments and ignores them
+                    while (!(peek().has_value() && peek().value() == '*' && peek(1).has_value() && peek(1).value() == '/')) {
+                        next();
+                    }
+
+                    if (peek().has_value()) next(); // consumes final '*'
+                    if (peek().has_value()) next(); // consumes final '/'
+                    
+                    continue;
                 } else if (std::isalpha(current)) {
                     buffer.push_back(current);
 
@@ -79,11 +89,10 @@ class Tokenizer {
                     tokens.push_back({.type = TokenType::semi, .value = {}});
                     continue;
                 } else {
-                    std::cerr << "Error!\n";
+                    std::cerr << "Error trying to tokenize the following element:\n";
                     std::cerr << current << "\n";
                     exit(EXIT_FAILURE);
                 }
-                
                 
             }
         
